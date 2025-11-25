@@ -11,29 +11,27 @@ app.use(express.json());
 
 
 const pool = new Pool({
-  user: process.env.DB_USER,       // Lit depuis .env
-  host: process.env.DB_HOST,       // Lit depuis .env
-  database: process.env.DB_NAME,   // Lit depuis .env
-  password: process.env.DB_PASSWORD, // Lit depuis .env (CACHÉ !)
-  port: process.env.DB_PORT,       // Lit depuis .env
+  user: process.env.DB_USER,       
+  host: process.env.DB_HOST,       
+  database: process.env.DB_NAME,   
+  password: process.env.DB_PASSWORD, 
+  port: process.env.DB_PORT,       
 });
 
 // Test de connexion
 pool.connect((err) => {
   if (err) {
-    console.error('❌ Erreur de connexion à PostgreSQL:', err);
+    console.error('Erreur de connexion à PostgreSQL:', err);
   } else {
-    console.log('✅ Connecté à PostgreSQL !');
+    console.log('Connecté à PostgreSQL !');
   }
 });
 
-// ROUTE D'ACCUEIL / DOCUMENTATION 
 
-// Swagger
 
 app.get('/', (req, res) => {
   res.json({
-    message: '🎉 Bienvenue sur l\'API SerTiznit !',
+    message: 'Bienvenue sur l\'API SerTiznit !',
     endpoints: {
       'GET /artisans': 'Voir tous les artisans',
       'GET /artisans/:id': 'Voir un artisan',
@@ -44,7 +42,6 @@ app.get('/', (req, res) => {
   });
 });
 
-//  ROUTE 1 : VOIR TOUS LES ARTISANS
 app.get('/artisans', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM artisans ORDER BY id');
@@ -62,7 +59,6 @@ app.get('/artisans', async (req, res) => {
   }
 });
 
-//  ROUTE 2 : VOIR UN ARTISAN PAR ID
 app.get('/artisans/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,7 +67,7 @@ app.get('/artisans/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ 
         success: false, 
-        message: '❌ Artisan introuvable' 
+        message: 'Artisan introuvable' 
       });
     }
     
@@ -88,16 +84,14 @@ app.get('/artisans/:id', async (req, res) => {
   }
 });
 
-//  ROUTE 3 : AJOUTER UN ARTISAN
 app.post('/artisans', async (req, res) => {
   try {
     const { nom, profession, telephone, note } = req.body;
     
-    // Validation simple
     if (!nom || !profession || !telephone) {
       return res.status(400).json({ 
         success: false, 
-        message: '⚠️ Nom, profession et téléphone sont obligatoires' 
+        message: 'Nom, profession et téléphone sont obligatoires' 
       });
     }
     
@@ -108,7 +102,7 @@ app.post('/artisans', async (req, res) => {
     
     res.status(201).json({
       success: true,
-      message: '✅ Artisan ajouté avec succès',
+      message: 'Artisan ajouté avec succès',
       data: result.rows[0]
     });
   } catch (error) {
@@ -120,7 +114,6 @@ app.post('/artisans', async (req, res) => {
   }
 });
 
-//  ROUTE 4 : MODIFIER UN ARTISAN
 app.put('/artisans/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -134,13 +127,13 @@ app.put('/artisans/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ 
         success: false, 
-        message: '❌ Artisan introuvable' 
+        message: 'Artisan introuvable' 
       });
     }
     
     res.json({
       success: true,
-      message: '✅ Artisan modifié avec succès',
+      message: 'Artisan modifié avec succès',
       data: result.rows[0]
     });
   } catch (error) {
@@ -152,7 +145,6 @@ app.put('/artisans/:id', async (req, res) => {
   }
 });
 
-//  ROUTE 5 : SUPPRIMER UN ARTISAN
 app.delete('/artisans/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -161,13 +153,13 @@ app.delete('/artisans/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ 
         success: false, 
-        message: '❌ Artisan introuvable' 
+        message: 'Artisan introuvable' 
       });
     }
     
     res.json({
       success: true,
-      message: '✅ Artisan supprimé avec succès',
+      message: 'Artisan supprimé avec succès',
       data: result.rows[0]
     });
   } catch (error) {
@@ -179,7 +171,6 @@ app.delete('/artisans/:id', async (req, res) => {
   }
 });
 
-// 🎁 BONUS : RECHERCHE PAR PROFESSION
 app.get('/artisans/search/:profession', async (req, res) => {
   try {
     const { profession } = req.params;
@@ -202,7 +193,6 @@ app.get('/artisans/search/:profession', async (req, res) => {
   }
 });
 
-// 🎁 BONUS : STATISTIQUES
 app.get('/stats/total', async (req, res) => {
   try {
     const result = await pool.query('SELECT COUNT(*) as total FROM artisans');
@@ -219,8 +209,6 @@ app.get('/stats/total', async (req, res) => {
   }
 });
 
-// 9️⃣ DÉMARRER LE SERVEUR
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
-  console.log(`📖 Documentation : http://localhost:${PORT}/`);
+  console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });
